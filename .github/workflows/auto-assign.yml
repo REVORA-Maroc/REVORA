@@ -1,3 +1,54 @@
+# name: Auto-assign new issues
+
+# on:
+#   issues:
+#     types: [opened]
+#   pull_request:
+#     types: [opened]
+
+# permissions:
+#   issues: write          # needed to assign issues
+#   pull-requests: write   # needed to request reviewers
+
+# jobs:
+#   auto-assign:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Auto-assign issue or PR
+#         uses: actions/github-script@v7
+#         with:
+#           script: |
+#             const assignees = ['BouglaceMarouane', 'aymen-afamm'];
+
+#             const number =
+#               context.payload.issue?.number ||
+#               context.payload.pull_request?.number;
+
+#             const isIssue = !!context.payload.issue;
+
+#             // Deterministic round-robin using issue/PR number
+#             const assigned = assignees[number % assignees.length];
+
+#             if (isIssue) {
+#               await github.rest.issues.addAssignees({
+#                 owner: context.repo.owner,
+#                 repo: context.repo.repo,
+#                 issue_number: number,
+#                 assignees: [assigned],
+#               });
+#             } else {
+#               // request the other person as reviewer
+#               const reviewers = assignees.filter(u => u !== assigned);
+
+#               await github.rest.pulls.requestReviewers({
+#                 owner: context.repo.owner,
+#                 repo: context.repo.repo,
+#                 pull_number: number,
+#                 reviewers,
+#               });
+#             }
+
+
 name: Auto-assign new issues
 
 on:
@@ -7,8 +58,8 @@ on:
     types: [opened]
 
 permissions:
-  issues: write          # needed to assign issues
-  pull-requests: write   # needed to request reviewers
+  issues: write
+  pull-requests: write
 
 jobs:
   auto-assign:
@@ -26,7 +77,11 @@ jobs:
 
             const isIssue = !!context.payload.issue;
 
-            // Deterministic round-robin using issue/PR number
+            const author =
+              context.payload.issue?.user?.login ||
+              context.payload.pull_request?.user?.login;
+
+            // Round-robin
             const assigned = assignees[number % assignees.length];
 
             if (isIssue) {
@@ -37,13 +92,19 @@ jobs:
                 assignees: [assigned],
               });
             } else {
-              // request the other person as reviewer
-              const reviewers = assignees.filter(u => u !== assigned);
+              // remove PR author from reviewers
+              const reviewers = assignees.filter(
+                u => u !== author
+              );
 
-              await github.rest.pulls.requestReviewers({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: number,
-                reviewers,
-              });
+              if (reviewers.length > 0) {
+                await github.rest.pulls.requestReviewers({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: number,
+                  reviewers,
+                });
+              } else {
+                console.log("No valid reviewers (author only). Skipping.");
+              }
             }
