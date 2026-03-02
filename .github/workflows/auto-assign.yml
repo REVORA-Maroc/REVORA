@@ -7,8 +7,8 @@ on:
     types: [opened]
 
 permissions:
-  issues: write          # ✅ needed to assign issues
-  pull-requests: write   # ✅ needed to request reviewers
+  issues: write          # needed to assign issues
+  pull-requests: write   # needed to request reviewers
 
 jobs:
   auto-assign:
@@ -19,22 +19,31 @@ jobs:
         with:
           script: |
             const assignees = ['BouglaceMarouane', 'aymen-afamm'];
-            const number = context.payload.issue?.number || context.payload.pull_request?.number;
-            const assigned = [assignees[number % 2]];
+
+            const number =
+              context.payload.issue?.number ||
+              context.payload.pull_request?.number;
+
             const isIssue = !!context.payload.issue;
+
+            // Deterministic round-robin using issue/PR number
+            const assigned = assignees[number % assignees.length];
 
             if (isIssue) {
               await github.rest.issues.addAssignees({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: number,
-                assignees: assigned
+                assignees: [assigned],
               });
             } else {
+              // request the other person as reviewer
+              const reviewers = assignees.filter(u => u !== assigned);
+
               await github.rest.pulls.requestReviewers({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: number,
-                reviewers: assignees.filter(u => u !== assigned[0])
+                reviewers,
               });
             }
