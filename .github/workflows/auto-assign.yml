@@ -6,6 +6,10 @@ on:
   pull_request:
     types: [opened]
 
+permissions:
+  issues: write          # ✅ needed to assign issues
+  pull-requests: write   # ✅ needed to request reviewers
+
 jobs:
   auto-assign:
     runs-on: ubuntu-latest
