@@ -51,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    const Color(0xFF259df4).withOpacity(0.1),
+                    const Color(0xFF259df4).withValues(alpha:  0.1),
                     Colors.transparent,
                   ],
                 ),
@@ -68,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               height: 600,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFF259df4).withOpacity(0.05),
+                color: const Color(0xFF259df4).withValues(alpha: 0.05),
               ),
             ),
           ),
@@ -87,10 +87,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       height: 160,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFF259df4).withOpacity(0.2),
+                        color: const Color(0xFF259df4).withValues(alpha: 0.2),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF259df4).withOpacity(0.2),
+                            color: const Color(0xFF259df4).withValues(alpha: 0.2),
                             blurRadius: 80,
                             spreadRadius: 20,
                           ),
@@ -103,10 +103,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFF259df4).withOpacity(0.3),
+                          color: const Color(0xFF259df4).withValues(alpha: 0.3),
                           width: 1,
                         ),
-                        color: const Color(0xFF101a22).withOpacity(0.8),
+                        color: const Color(0xFF101a22).withValues(alpha: 0.8),
                       ),
                       child: const Icon(
                         Icons.settings_input_component,
@@ -230,7 +230,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       height: 6,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFF259df4).withOpacity(0.4),
+                        color: const Color(0xFF259df4).withValues(alpha: 0.4),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -248,7 +248,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       height: 6,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFF259df4).withOpacity(0.4),
+                        color: const Color(0xFF259df4).withValues(alpha: 0.4),
                       ),
                     ),
                   ],
@@ -265,10 +265,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               width: 512,
               height: 192,
               decoration: BoxDecoration(
-                color: const Color(0xFF259df4).withOpacity(0.2),
+                color: const Color(0xFF259df4).withValues(alpha: 0.2),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF259df4).withOpacity(0.3),
+                    color: const Color(0xFF259df4).withValues(alpha: 0.3),
                     blurRadius: 100,
                   ),
                 ],
@@ -367,7 +367,7 @@ class GridPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF259df4).withOpacity(0.02)
+      ..color = const Color(0xFF259df4).withValues(alpha: 0.02)
       ..strokeWidth = 1;
 
     const spacing = 40.0;
