@@ -1,5 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../main.dart'; // Import NavigationHelper
+import '../services/preferences_service.dart';
+import '../theme/app_theme.dart';
 
+/// Futuristic Splash Screen with animated gradient and neon effects
+/// 
+/// Navigation Logic:
+/// - Shows for 3 seconds with animation
+/// - First-time users → Navigates to OnboardingScreen
+/// - Returning users → Navigates directly to LoginScreen
+/// - Uses SharedPreferences to track if user has seen onboarding
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -7,377 +19,289 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _progressAnimation;
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _logoController;
+  late AnimationController _glowController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _glowAnimation;
+  
+  final _preferences = PreferencesService();
+  bool _isNavigating = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 3),
+
+    // Initialize animations
+    _initAnimations();
+    
+    // Start navigation sequence after splash display
+    _startNavigationSequence();
+  }
+  
+  /// Initialize all animation controllers
+  void _initAnimations() {
+    // Logo scale animation with bounce effect
+    _logoController = AnimationController(
       vsync: this,
+      duration: const Duration(milliseconds: 1500),
     );
-    _progressAnimation = Tween<double>(begin: 0.0, end: 0.32).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween(begin: 0.0, end: 1.2)
+            .chain(CurveTween(curve: Curves.easeOutBack)),
+        weight: 60,
+      ),
+      TweenSequenceItem(
+        tween: Tween(begin: 1.2, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 40,
+      ),
+    ]).animate(_logoController);
+
+    // Glow pulse animation for neon effect
+    _glowController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat(reverse: true);
+
+    _glowAnimation = Tween<double>(begin: 0.4, end: 1.0).animate(
+      CurvedAnimation(parent: _glowController, curve: Curves.easeInOut),
     );
-    _controller.forward();
+  }
+
+  /// Main navigation sequence
+  /// 1. Show splash animations (3 seconds)
+  /// 2. Check if user has seen onboarding
+  /// 3. Navigate to appropriate screen
+  void _startNavigationSequence() async {
+    // Start logo animation immediately
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (mounted) _logoController.forward();
+    
+    // Wait for full splash display (3 seconds total)
+    await Future.delayed(const Duration(milliseconds: 3000));
+    
+    // Prevent multiple navigations
+    if (_isNavigating || !mounted) return;
+    _isNavigating = true;
+    
+    // Check if user has seen onboarding
+    final hasSeenOnboarding = _preferences.hasSeenOnboarding;
+    
+    debugPrint('🔍 Checking onboarding status: $hasSeenOnboarding');
+    
+    if (hasSeenOnboarding) {
+      // Returning user - go directly to Login
+      debugPrint('👤 Returning user → LoginScreen');
+      NavigationHelper.navigateToLogin(context);
+    } else {
+      // First-time user - show Onboarding
+      debugPrint('🆕 First-time user → OnboardingScreen');
+      NavigationHelper.navigateToOnboarding(context);
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _logoController.dispose();
+    _glowController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF101a22),
-      body: Stack(
-        children: [
-          // Grid pattern background
-          Positioned.fill(
-            child: CustomPaint(
-              painter: GridPatternPainter(),
-            ),
-          ),
-          
-          // Gradient overlay
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    const Color(0xFF259df4).withValues(alpha:  0.1),
-                    Colors.transparent,
-                  ],
-                ),
+      backgroundColor: AppTheme.deepSpace,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppTheme.darkBackgroundGradient,
+        ),
+        child: Stack(
+          children: [
+            // Animated background grid
+            Positioned.fill(
+              child: CustomPaint(
+                painter: NeonGridPainter(),
               ),
             ),
-          ),
-          
-          // Blur circle top
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.25,
-            left: MediaQuery.of(context).size.width * 0.5 - 300,
-            child: Container(
-              width: 600,
-              height: 600,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF259df4).withValues(alpha: 0.05),
-              ),
-            ),
-          ),
-          
-          // Main content
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo with glow
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: 160,
-                      height: 160,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFF259df4).withValues(alpha: 0.2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF259df4).withValues(alpha: 0.2),
-                            blurRadius: 80,
-                            spreadRadius: 20,
-                          ),
+
+            // Central glow effect with pulse animation
+            AnimatedBuilder(
+              animation: _glowAnimation,
+              builder: (context, child) {
+                return Center(
+                  child: Container(
+                    width: 400,
+                    height: 400,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          AppTheme.neonCyan.withOpacity(0.15 * _glowAnimation.value),
+                          AppTheme.neonBlue.withOpacity(0.05 * _glowAnimation.value),
+                          Colors.transparent,
                         ],
                       ),
                     ),
-                    Container(
-                      width: 128,
-                      height: 128,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: const Color(0xFF259df4).withValues(alpha: 0.3),
-                          width: 1,
-                        ),
-                        color: const Color(0xFF101a22).withValues(alpha: 0.8),
-                      ),
-                      child: const Icon(
-                        Icons.settings_input_component,
-                        size: 64,
-                        color: Color(0xFF259df4),
-                      ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 48),
-                
-                // Title and subtitle
-                const Text(
-                  'REVORA',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 44,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 8.8,
-                    height: 1,
                   ),
-                ),
-                
-                const SizedBox(height: 16),
-                
-                const Text(
-                  'Smart Vehicle Diagnostics\n& Driving Insights',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF94a3b8),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w300,
-                    height: 1.5,
-                  ),
-                ),
-              ],
+                );
+              },
             ),
-          ),
-          
-          // Bottom section with progress
-          Positioned(
-            bottom: 64,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                // Progress bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 320),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              const Text(
-                                'INITIALIZING AI CORE',
-                                style: TextStyle(
-                                  color: Color(0xFF259df4),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 2,
-                                ),
-                              ),
-                              AnimatedBuilder(
-                                animation: _progressAnimation,
-                                builder: (context, child) {
-                                  return Text(
-                                    '${(_progressAnimation.value * 100).toInt()}%',
-                                    style: const TextStyle(
-                                      color: Color(0xFF64748b),
-                                      fontSize: 12,
-                                    ),
-                                  );
-                                },
+
+            // Main content
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Animated Logo with scale effect
+                  // Uses the actual Revora logo from assets with pulsing glow animation
+                  ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: AnimatedBuilder(
+                      animation: _glowAnimation,
+                      builder: (context, child) {
+                        return Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(36),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.neonCyan
+                                    .withOpacity(0.5 * _glowAnimation.value),
+                                blurRadius: 60 * _glowAnimation.value,
+                                spreadRadius: 20 * _glowAnimation.value,
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Container(
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1e293b),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                          child: AnimatedBuilder(
-                            animation: _progressAnimation,
-                            builder: (context, child) {
-                              return FractionallySizedBox(
-                                alignment: Alignment.centerLeft,
-                                widthFactor: _progressAnimation.value,
-                                child: Container(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(36),
+                            child: Image.asset(
+                              'assets/images/revora_logo.png',
+                              width: 150,
+                              height: 150,
+                              fit: BoxFit.contain,
+                              // Fallback icon if logo fails to load
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF259df4),
-                                    borderRadius: BorderRadius.circular(2),
+                                    borderRadius: BorderRadius.circular(36),
+                                    gradient: const LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [AppTheme.neonCyan, AppTheme.neonBlue],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                  child: const Icon(
+                                    Icons.electric_car,
+                                    size: 75,
+                                    color: Colors.black,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Dots indicator
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFF259df4).withValues(alpha: 0.4),
-                      ),
+
+                  const SizedBox(height: 40),
+
+                  // App name with shimmer effect
+                  Text(
+                    'REVORA',
+                    style: GoogleFonts.inter(
+                      fontSize: 42,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.textPrimary,
+                      letterSpacing: 8,
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFF259df4),
+                  )
+                      .animate()
+                      .shimmer(
+                        duration: const Duration(seconds: 2),
+                        color: AppTheme.neonCyan.withOpacity(0.3),
                       ),
+
+                  const SizedBox(height: 12),
+
+                  // Tagline
+                  Text(
+                    'AI-Powered Vehicle Diagnostics',
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      color: AppTheme.textSecondary,
+                      letterSpacing: 1,
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFF259df4).withValues(alpha: 0.4),
+                  ).animate().fadeIn(delay: const Duration(milliseconds: 600)),
+
+                  const SizedBox(height: 60),
+
+                  // Loading indicator
+                  SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        AppTheme.neonCyan,
                       ),
+                      backgroundColor: AppTheme.glassBorder,
                     ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          
-          // Bottom blur
-          Positioned(
-            bottom: -100,
-            left: MediaQuery.of(context).size.width * 0.5 - 256,
-            child: Container(
-              width: 512,
-              height: 192,
-              decoration: BoxDecoration(
-                color: const Color(0xFF259df4).withValues(alpha: 0.2),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF259df4).withValues(alpha: 0.3),
-                    blurRadius: 100,
-                  ),
+                  )
+                      .animate()
+                      .fadeIn(delay: const Duration(milliseconds: 800)),
                 ],
               ),
             ),
-          ),
-          
-          // Top left coordinates (hidden on mobile)
-          if (MediaQuery.of(context).size.width > 600)
-            Positioned(
-              top: 40,
-              left: 40,
-              child: Opacity(
-                opacity: 0.2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 1,
-                      width: 96,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            const Color(0xFF259df4),
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'LAT: 34.0522° N',
-                      style: TextStyle(
-                        color: Color(0xFF259df4),
-                        fontSize: 10,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'LNG: 118.2437° W',
-                      style: TextStyle(
-                        color: Color(0xFF259df4),
-                        fontSize: 10,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          
-          // Bottom right status (hidden on mobile)
-          if (MediaQuery.of(context).size.width > 600)
-            Positioned(
-              bottom: 40,
-              right: 40,
-              child: Opacity(
-                opacity: 0.2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const Text(
-                      'SYSTEM STATUS: OPTIMAL',
-                      style: TextStyle(
-                        color: Color(0xFF259df4),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      height: 1,
-                      width: 96,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.transparent,
-                            const Color(0xFF259df4),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-class GridPatternPainter extends CustomPainter {
+/// Animated neon grid background painter
+/// Creates a futuristic grid effect with glowing points
+class NeonGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF259df4).withValues(alpha: 0.02)
-      ..strokeWidth = 1;
+      ..color = AppTheme.neonCyan.withOpacity(0.03)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
 
-    const spacing = 40.0;
-
-    for (double i = 0; i < size.width; i += spacing) {
-      canvas.drawLine(Offset(i, 0), Offset(i, size.height), paint);
+    // Draw vertical lines
+    for (double x = 0; x < size.width; x += 50) {
+      canvas.drawLine(
+        Offset(x, 0),
+        Offset(x, size.height),
+        paint,
+      );
     }
 
-    for (double i = 0; i < size.height; i += spacing) {
-      canvas.drawLine(Offset(0, i), Offset(size.width, i), paint);
+    // Draw horizontal lines
+    for (double y = 0; y < size.height; y += 50) {
+      canvas.drawLine(
+        Offset(0, y),
+        Offset(size.width, y),
+        paint,
+      );
+    }
+
+    // Draw intersection points
+    final pointPaint = Paint()
+      ..color = AppTheme.neonCyan.withOpacity(0.1)
+      ..style = PaintingStyle.fill;
+
+    for (double x = 0; x < size.width; x += 50) {
+      for (double y = 0; y < size.height; y += 50) {
+        canvas.drawCircle(Offset(x, y), 1.5, pointPaint);
+      }
     }
   }
 
