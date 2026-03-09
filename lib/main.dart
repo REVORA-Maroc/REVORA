@@ -8,32 +8,21 @@ import 'screens/onboarding_screen.dart';
 import 'screens/login_screen.dart';
 
 /// Main entry point for Revora app
-/// Handles Firebase initialization and routing logic
-void main() async {
+/// Shows SplashScreen immediately while initializing in background
+void main() {
   // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Firebase (with error handling for development)
-  try {
-    await Firebase.initializeApp();
-    debugPrint('✅ Firebase initialized successfully');
-  } catch (e) {
-    debugPrint('⚠️ Firebase initialization error: $e');
-    debugPrint('App will run in demo mode without Firebase');
-  }
-  
-  // Initialize SharedPreferences for storing app state
-  await PreferencesService().init();
-  
-  // Set system UI style for immersive experience
+  // Set system UI style immediately for immersive experience
   SystemChrome.setSystemUIOverlayStyle(AppTheme.systemUiOverlayStyle);
   
-  // Run the app
+  // Run the app immediately with SplashScreen
+  // SplashScreen will handle initialization
   runApp(const MyApp());
 }
 
 /// Root widget of the application
-/// Determines initial route based on user state
+/// Shows SplashScreen immediately
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -45,7 +34,6 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.futuristicTheme,
       
       // Show SplashScreen as initial route
-      // SplashScreen will handle navigation to Onboarding or Login
       home: const SplashScreen(),
     );
   }

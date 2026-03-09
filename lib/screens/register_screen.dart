@@ -4,12 +4,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../services/firebase_auth_service.dart';
-import '../widgets/futuristic_widgets.dart';
-import '../widgets/app_logo.dart'; // App logo for consistent branding
 import 'main_app_screen.dart';
+import 'login_screen.dart';
+import 'onboarding_screen.dart';
 
-/// Futuristic Register Screen with Firebase OAuth
-/// Features glassmorphism, password strength, and Google Sign-Up
+/// Professional Register Screen with compact layout
+/// Features clean design and OAuth registration options
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -28,6 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   bool _isLoading = false;
   bool _isGoogleLoading = false;
+  bool _isAppleLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _agreedToTerms = false;
@@ -41,10 +42,9 @@ class _RegisterScreenState extends State<RegisterScreen>
     super.dispose();
   }
 
-  /// Handle registration with email/password
   Future<void> _register() async {
     if (!_agreedToTerms) {
-      _showErrorSnackBar('Please agree to the Terms of Service and Privacy Policy');
+      _showErrorSnackBar('Please agree to the Terms and Privacy Policy');
       return;
     }
 
@@ -77,7 +77,6 @@ class _RegisterScreenState extends State<RegisterScreen>
     }
   }
 
-  /// Handle Google Sign-Up
   Future<void> _signUpWithGoogle() async {
     setState(() => _isGoogleLoading = true);
 
@@ -90,11 +89,32 @@ class _RegisterScreenState extends State<RegisterScreen>
       }
     } catch (e) {
       if (mounted) {
-        _showErrorSnackBar(e.toString());
+        _showErrorSnackBar('Google sign-up failed: $e');
       }
     } finally {
       if (mounted) {
         setState(() => _isGoogleLoading = false);
+      }
+    }
+  }
+
+  Future<void> _signUpWithApple() async {
+    setState(() => _isAppleLoading = true);
+
+    try {
+      final credential = await _authService.signInWithApple();
+
+      if (credential != null && mounted) {
+        _showSuccessSnackBar('Welcome to Revora!');
+        _navigateToHome();
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackBar('Apple sign-up failed: $e');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isAppleLoading = false);
       }
     }
   }
@@ -123,7 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.error_outline, color: Colors.white),
+            const Icon(Icons.error_outline, color: Colors.white, size: 20),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -137,6 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
@@ -146,7 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle_outline, color: Colors.white),
+            const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -156,10 +177,11 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
           ],
         ),
-        backgroundColor: AppTheme.electricGreen.withOpacity(0.9),
+        backgroundColor: Colors.green.withOpacity(0.9),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -168,8 +190,28 @@ class _RegisterScreenState extends State<RegisterScreen>
     Navigator.pop(context);
   }
 
+  void _navigateToOnboarding() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const OnboardingScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 300),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.height < 750;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: AppTheme.systemUiOverlayStyle,
       child: Scaffold(
@@ -179,357 +221,612 @@ class _RegisterScreenState extends State<RegisterScreen>
             gradient: AppTheme.darkBackgroundGradient,
           ),
           child: SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
-
-                      // Back Button & Header
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: _navigateToLogin,
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppTheme.glassDark,
-                                border: Border.all(
-                                  color: AppTheme.glassBorder,
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.arrow_back,
-                                color: AppTheme.textPrimary,
-                                size: 20,
-                              ),
-                            ),
-                          )
-                              .animate()
-                              .fadeIn()
-                              .scale(delay: const Duration(milliseconds: 100)),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              'Create Account',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.inter(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: AppTheme.textPrimary,
-                              ),
-                            )
-                                .animate()
-                                .fadeIn()
-                                .slideX(begin: 0.2, end: 0),
-                          ),
-                          const SizedBox(width: 44),
-                        ],
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // App Logo - displays the Revora logo from assets with animation
-                      Center(child: AppLogo.medium(context, animate: true)),
-
-                      const SizedBox(height: 24),
-
-                      // Header Text
-                      Text(
-                        'Join Revora AI',
-                        style: GoogleFonts.inter(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.textPrimary,
-                          letterSpacing: -0.5,
-                        ),
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 100))
-                          .slideY(begin: 0.2, end: 0),
-
-                      const SizedBox(height: 8),
-
-                      Text(
-                        'Monitor your vehicle\'s health with professional OBD-II diagnostics.',
-                        style: GoogleFonts.inter(
-                          fontSize: 15,
-                          color: AppTheme.textSecondary,
-                          height: 1.5,
-                        ),
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 200)),
-
-                      const SizedBox(height: 32),
-
-                      // Full Name Field
-                      FuturisticTextField(
-                        label: 'Full Name',
-                        hint: 'John Doe',
-                        prefixIcon: Icons.person_outline,
-                        controller: _nameController,
-                        validator: (value) {
-                          if (value?.isEmpty ?? true) {
-                            return 'Please enter your full name';
-                          }
-                          if (value!.length < 2) {
-                            return 'Name must be at least 2 characters';
-                          }
-                          return null;
-                        },
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 300))
-                          .slideX(begin: -0.1, end: 0),
-
-                      const SizedBox(height: 20),
-
-                      // Email Field
-                      FuturisticTextField(
-                        label: 'Email Address',
-                        hint: 'name@example.com',
-                        prefixIcon: Icons.email_outlined,
-                        keyboardType: TextInputType.emailAddress,
-                        controller: _emailController,
-                        validator: (value) {
-                          if (value?.isEmpty ?? true) {
-                            return 'Please enter your email';
-                          }
-                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value!)) {
-                            return 'Please enter a valid email address';
-                          }
-                          return null;
-                        },
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 400))
-                          .slideX(begin: -0.1, end: 0),
-
-                      const SizedBox(height: 20),
-
-                      // Password Field
-                      FuturisticTextField(
-                        label: 'Password',
-                        hint: '••••••••',
-                        prefixIcon: Icons.lock_outline,
-                        suffixIcon: _obscurePassword
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        obscureText: _obscurePassword,
-                        onSuffixTap: () {
-                          setState(() => _obscurePassword = !_obscurePassword);
-                        },
-                        controller: _passwordController,
-                        validator: (value) {
-                          if (value?.isEmpty ?? true) {
-                            return 'Please enter a password';
-                          }
-                          if (value!.length < 8) {
-                            return 'Password must be at least 8 characters';
-                          }
-                          return null;
-                        },
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 500))
-                          .slideX(begin: -0.1, end: 0),
-
-                      const SizedBox(height: 12),
-
-                      // Password Strength Indicator
-                      PasswordStrengthIndicator(
-                        password: _passwordController.text,
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 550)),
-
-                      const SizedBox(height: 20),
-
-                      // Confirm Password Field
-                      FuturisticTextField(
-                        label: 'Confirm Password',
-                        hint: '••••••••',
-                        prefixIcon: Icons.lock_reset_outlined,
-                        suffixIcon: _obscureConfirmPassword
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        obscureText: _obscureConfirmPassword,
-                        onSuffixTap: () {
-                          setState(() =>
-                              _obscureConfirmPassword = !_obscureConfirmPassword);
-                        },
-                        controller: _confirmPasswordController,
-                        validator: (value) {
-                          if (value?.isEmpty ?? true) {
-                            return 'Please confirm your password';
-                          }
-                          if (value != _passwordController.text) {
-                            return 'Passwords do not match';
-                          }
-                          return null;
-                        },
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 600))
-                          .slideX(begin: -0.1, end: 0),
-
-                      const SizedBox(height: 24),
-
-                      // Terms Checkbox
-                      GestureDetector(
-                        onTap: () {
-                          setState(() => _agreedToTerms = !_agreedToTerms);
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: isSmallScreen ? 8 : 12,
+              ),
+              child: Column(
+                children: [
+                  // Main scrollable content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: _agreedToTerms
-                                      ? AppTheme.neonCyan
-                                      : AppTheme.glassBorder,
-                                  width: _agreedToTerms ? 2 : 1.5,
-                                ),
-                                color: _agreedToTerms
-                                    ? AppTheme.neonCyan
-                                    : Colors.transparent,
-                                boxShadow: _agreedToTerms
-                                    ? [
-                                        BoxShadow(
-                                          color:
-                                              AppTheme.neonCyan.withOpacity(0.3),
-                                          blurRadius: 8,
-                                          spreadRadius: 2,
-                                        ),
-                                      ]
-                                    : [],
-                              ),
-                              child: _agreedToTerms
-                                  ? const Icon(
-                                      Icons.check,
-                                      size: 16,
-                                      color: Colors.black,
-                                    )
-                                  : null,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: RichText(
-                                text: TextSpan(
-                                  style: GoogleFonts.inter(
-                                    fontSize: 13,
-                                    height: 1.5,
-                                    color: AppTheme.textSecondary,
-                                  ),
-                                  children: [
-                                    const TextSpan(text: 'I agree to the '),
-                                    TextSpan(
-                                      text: 'Terms of Service',
-                                      style: const TextStyle(
-                                        color: AppTheme.neonCyan,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const TextSpan(text: ' and '),
-                                    TextSpan(
-                                      text: 'Privacy Policy',
-                                      style: const TextStyle(
-                                        color: AppTheme.neonCyan,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                            SizedBox(height: isSmallScreen ? 16 : 24),
+                            Center(
+                              child: Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(18),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppTheme.neonCyan.withOpacity(0.3),
+                                      blurRadius: 25,
+                                      spreadRadius: 4,
                                     ),
                                   ],
                                 ),
-                              ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(18),
+                                  child: Image.asset(
+                                    'assets/images/revora_logo.png',
+                                    width: 70,
+                                    height: 70,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(18),
+                                          gradient: const LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              AppTheme.neonCyan,
+                                              AppTheme.neonBlue
+                                            ],
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.electric_car,
+                                          size: 35,
+                                          color: Colors.black,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              )
+                                  .animate()
+                                  .fadeIn(duration: const Duration(milliseconds: 400))
+                                  .scale(delay: const Duration(milliseconds: 100)),
                             ),
+
+                            const SizedBox(height: 16),
+
+                            // Welcome Text
+                            Text(
+                              'Create Account',
+                              style: GoogleFonts.inter(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w800,
+                                color: AppTheme.textPrimary,
+                                letterSpacing: -0.5,
+                              ),
+                            )
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 200))
+                                .slideY(begin: 0.2, end: 0),
+
+                            const SizedBox(height: 4),
+
+                            Text(
+                              'Join Revora for AI vehicle diagnostics',
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: AppTheme.textSecondary,
+                              ),
+                            )
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 300)),
+
+                            SizedBox(height: isSmallScreen ? 16 : 20),
+
+                            // Name Field
+                            _buildTextField(
+                              controller: _nameController,
+                              label: 'Full Name',
+                              hint: 'John Doe',
+                              prefixIcon: Icons.person_outline,
+                              validator: (value) {
+                                if (value?.isEmpty ?? true) {
+                                  return 'Please enter your name';
+                                }
+                                if (value!.length < 2) {
+                                  return 'Name must be at least 2 characters';
+                                }
+                                return null;
+                              },
+                            )
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 400))
+                                .slideX(begin: -0.1, end: 0),
+
+                            const SizedBox(height: 12),
+
+                            // Email Field
+                            _buildTextField(
+                              controller: _emailController,
+                              label: 'Email',
+                              hint: 'name@example.com',
+                              prefixIcon: Icons.email_outlined,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                if (value?.isEmpty ?? true) {
+                                  return 'Please enter your email';
+                                }
+                                if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                                    .hasMatch(value!)) {
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
+                              },
+                            )
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 500))
+                                .slideX(begin: -0.1, end: 0),
+
+                            const SizedBox(height: 12),
+
+                            // Password Field
+                            _buildTextField(
+                              controller: _passwordController,
+                              label: 'Password',
+                              hint: '••••••••',
+                              prefixIcon: Icons.lock_outline,
+                              obscureText: _obscurePassword,
+                              suffixIcon: _obscurePassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              onSuffixTap: () {
+                                setState(() =>
+                                    _obscurePassword = !_obscurePassword);
+                              },
+                              validator: (value) {
+                                if (value?.isEmpty ?? true) {
+                                  return 'Please enter a password';
+                                }
+                                if (value!.length < 6) {
+                                  return 'Password must be at least 6 characters';
+                                }
+                                return null;
+                              },
+                            )
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 600))
+                                .slideX(begin: -0.1, end: 0),
+
+                            const SizedBox(height: 12),
+
+                            // Confirm Password Field
+                            _buildTextField(
+                              controller: _confirmPasswordController,
+                              label: 'Confirm Password',
+                              hint: '••••••••',
+                              prefixIcon: Icons.lock_reset_outlined,
+                              obscureText: _obscureConfirmPassword,
+                              suffixIcon: _obscureConfirmPassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              onSuffixTap: () {
+                                setState(() => _obscureConfirmPassword =
+                                    !_obscureConfirmPassword);
+                              },
+                              validator: (value) {
+                                if (value?.isEmpty ?? true) {
+                                  return 'Please confirm your password';
+                                }
+                                if (value != _passwordController.text) {
+                                  return 'Passwords do not match';
+                                }
+                                return null;
+                              },
+                            )
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 700))
+                                .slideX(begin: -0.1, end: 0),
+
+                            const SizedBox(height: 12),
+
+                            // Terms Checkbox
+                            _buildTermsCheckbox()
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 800)),
+
+                            SizedBox(height: isSmallScreen ? 14 : 18),
+
+                            // Create Account Button
+                            _buildCreateAccountButton()
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 900))
+                                .scale(delay: const Duration(milliseconds: 900)),
+
+                            const SizedBox(height: 16),
+
+                            // Divider
+                            _buildDivider()
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 1000)),
+
+                            const SizedBox(height: 14),
+
+                            // Social Registration Options
+                            _buildSocialButtons()
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 1100)),
+
+                            const SizedBox(height: 16),
+
+                            // Login Link
+                            _buildLoginLink()
+                                .animate()
+                                .fadeIn(delay: const Duration(milliseconds: 1200)),
+
+                            SizedBox(height: isSmallScreen ? 8 : 12),
                           ],
                         ),
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 700)),
-
-                      const SizedBox(height: 28),
-
-                      // Create Account Button
-                      NeonButton(
-                        text: 'Create Account',
-                        onPressed: _register,
-                        isLoading: _isLoading,
-                        height: 60,
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 800))
-                          .scale(delay: const Duration(milliseconds: 800)),
-
-                      const SizedBox(height: 20),
-
-                      // Divider
-                      const FuturisticDivider()
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 900)),
-
-                      const SizedBox(height: 20),
-
-                      // Google Sign Up Button
-                      GoogleSignInButton(
-                        onPressed: _signUpWithGoogle,
-                        isLoading: _isGoogleLoading,
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 1000))
-                          .slideY(begin: 0.2, end: 0),
-
-                      const SizedBox(height: 24),
-
-                      // Login Link
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Already have an account? ',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              color: AppTheme.textSecondary,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: _navigateToLogin,
-                            child: Text(
-                              'Sign In',
-                              style: GoogleFonts.inter(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: AppTheme.neonCyan,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                          .animate()
-                          .fadeIn(delay: const Duration(milliseconds: 1100)),
-
-                      const SizedBox(height: 40),
-                    ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData prefixIcon,
+    TextInputType? keyboardType,
+    bool obscureText = false,
+    IconData? suffixIcon,
+    VoidCallback? onSuffixTap,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 5),
+        TextFormField(
+          controller: controller,
+          obscureText: obscureText,
+          keyboardType: keyboardType,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: AppTheme.textPrimary,
+          ),
+          validator: validator,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: GoogleFonts.inter(
+              fontSize: 14,
+              color: AppTheme.textSecondary.withOpacity(0.5),
+            ),
+            prefixIcon: Icon(
+              prefixIcon,
+              color: AppTheme.textSecondary,
+              size: 18,
+            ),
+            suffixIcon: suffixIcon != null
+                ? GestureDetector(
+                    onTap: onSuffixTap,
+                    child: Icon(
+                      suffixIcon,
+                      color: AppTheme.textSecondary,
+                      size: 18,
+                    ),
+                  )
+                : null,
+            filled: true,
+            fillColor: AppTheme.glassDark,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(
+                color: AppTheme.glassBorder,
+                width: 1,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(
+                color: AppTheme.neonCyan,
+                width: 2,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(
+                color: Colors.redAccent,
+                width: 1,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 14,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTermsCheckbox() {
+    return GestureDetector(
+      onTap: () {
+        setState(() => _agreedToTerms = !_agreedToTerms);
+      },
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                color: _agreedToTerms ? AppTheme.neonCyan : AppTheme.glassBorder,
+                width: _agreedToTerms ? 2 : 1.5,
+              ),
+              color: _agreedToTerms ? AppTheme.neonCyan : Colors.transparent,
+              boxShadow: _agreedToTerms
+                  ? [
+                      BoxShadow(
+                        color: AppTheme.neonCyan.withOpacity(0.3),
+                        blurRadius: 6,
+                        spreadRadius: 1,
+                      ),
+                    ]
+                  : [],
+            ),
+            child: _agreedToTerms
+                ? const Icon(
+                    Icons.check,
+                    size: 14,
+                    color: Colors.black,
+                  )
+                : null,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  height: 1.4,
+                  color: AppTheme.textSecondary,
+                ),
+                children: [
+                  const TextSpan(text: 'I agree to the '),
+                  TextSpan(
+                    text: 'Terms of Service',
+                    style: const TextStyle(
+                      color: AppTheme.neonCyan,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const TextSpan(text: ' and '),
+                  TextSpan(
+                    text: 'Privacy Policy',
+                    style: const TextStyle(
+                      color: AppTheme.neonCyan,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCreateAccountButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _register,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppTheme.neonCyan,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+        ),
+        child: _isLoading
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Create Account',
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(
+                    Icons.arrow_forward,
+                    color: Colors.black,
+                    size: 18,
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: 1,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  AppTheme.glassBorder,
+                ],
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            'or',
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: AppTheme.textSecondary,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            height: 1,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppTheme.glassBorder,
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Google Button
+        _buildSocialButton(
+          onTap: _isGoogleLoading ? null : _signUpWithGoogle,
+          iconPath: 'assets/icons/Google.png',
+          isLoading: _isGoogleLoading,
+          label: 'Google',
+        ),
+        const SizedBox(width: 16),
+        // Apple Button
+        _buildSocialButton(
+          onTap: _isAppleLoading ? null : _signUpWithApple,
+          iconPath: 'assets/icons/Apple.png',
+          isLoading: _isAppleLoading,
+          label: 'Apple',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialButton({
+    required VoidCallback? onTap,
+    required String iconPath,
+    required bool isLoading,
+    required String label,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 64,
+        height: 50,
+        decoration: BoxDecoration(
+          color: AppTheme.glassDark,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: AppTheme.glassBorder,
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: isLoading
+            ? Center(
+                child: SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(AppTheme.neonCyan),
+                  ),
+                ),
+              )
+            : Center(
+                child: Image.asset(
+                  iconPath,
+                  width: 24,
+                  height: 24,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(
+                      label == 'Google' ? Icons.g_mobiledata : Icons.apple,
+                      color: AppTheme.textPrimary,
+                      size: 24,
+                    );
+                  },
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildLoginLink() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Already have an account? ',
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            color: AppTheme.textSecondary,
+          ),
+        ),
+        GestureDetector(
+          onTap: _navigateToLogin,
+          child: Text(
+            'Sign In',
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.neonCyan,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

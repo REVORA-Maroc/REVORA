@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
 
 /// Firebase Authentication Service
-/// Handles Email/Password auth and Google OAuth Sign-In
+/// Handles Email/Password auth, Google OAuth, and Apple Sign-In
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -42,7 +42,6 @@ class FirebaseAuthService {
     String password,
   ) async {
     if (!_isFirebaseInitialized) {
-      // Mock authentication for demo
       await Future.delayed(const Duration(seconds: 1));
       debugPrint('Mock sign in: $email');
       return null;
@@ -66,7 +65,6 @@ class FirebaseAuthService {
     String name,
   ) async {
     if (!_isFirebaseInitialized) {
-      // Mock registration for demo
       await Future.delayed(const Duration(seconds: 1));
       debugPrint('Mock sign up: $email');
       return null;
@@ -78,7 +76,6 @@ class FirebaseAuthService {
         password: password,
       );
       
-      // Update display name
       await credential.user?.updateDisplayName(name);
       
       return credential;
@@ -90,36 +87,50 @@ class FirebaseAuthService {
   /// Sign in with Google OAuth
   Future<UserCredential?> signInWithGoogle() async {
     if (!_isFirebaseInitialized) {
-      // Mock Google sign in for demo
       await Future.delayed(const Duration(seconds: 1));
       debugPrint('Mock Google sign in');
       return null;
     }
     
     try {
-      // Begin interactive sign-in process
       final GoogleSignInAccount? gUser = await _googleSignIn.signIn();
       
       if (gUser == null) {
-        // User cancelled the sign-in
         return null;
       }
 
-      // Obtain auth details from request
       final GoogleSignInAuthentication gAuth = await gUser.authentication;
 
-      // Create credential for user
       final credential = GoogleAuthProvider.credential(
         accessToken: gAuth.accessToken,
         idToken: gAuth.idToken,
       );
 
-      // Sign in to Firebase with credential
       return await _auth.signInWithCredential(credential);
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
-      throw 'Google sign-in failed. Please try again.';
+      throw 'Google sign-in failed: $e';
+    }
+  }
+
+  /// Sign in with Apple
+  /// Note: Requires apple_sign_in plugin for full implementation
+  Future<UserCredential?> signInWithApple() async {
+    if (!_isFirebaseInitialized) {
+      await Future.delayed(const Duration(seconds: 1));
+      debugPrint('Mock Apple sign in');
+      return null;
+    }
+    
+    try {
+      // For now, throw an error indicating Apple Sign-In is not fully implemented
+      // In production, you would use the sign_in_with_apple package
+      throw 'Apple Sign-In is not configured. Please use Google Sign-In or Email login.';
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      throw e.toString();
     }
   }
 
