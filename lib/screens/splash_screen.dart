@@ -30,7 +30,6 @@ class _SplashScreenState extends State<SplashScreen>
   
   final _preferences = PreferencesService();
   bool _isNavigating = false;
-  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -123,8 +122,6 @@ class _SplashScreenState extends State<SplashScreen>
     } catch (e) {
       debugPrint('⚠️ SharedPreferences initialization error: $e');
     }
-    
-    _isInitialized = true;
   }
 
   @override

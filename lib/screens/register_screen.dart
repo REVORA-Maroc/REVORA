@@ -5,8 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../services/firebase_auth_service.dart';
 import 'main_app_screen.dart';
-import 'login_screen.dart';
-import 'onboarding_screen.dart';
 
 /// Professional Register Screen with compact layout
 /// Features clean design and OAuth registration options
@@ -188,23 +186,6 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   void _navigateToLogin() {
     Navigator.pop(context);
-  }
-
-  void _navigateToOnboarding() {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const OnboardingScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
-    );
   }
 
   @override
