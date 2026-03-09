@@ -4,7 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../services/firebase_auth_service.dart';
-import 'main_app_screen.dart';
+import 'home_screen.dart';
 
 /// Professional Register Screen with compact layout
 /// Features clean design and OAuth registration options
@@ -117,16 +117,24 @@ class _RegisterScreenState extends State<RegisterScreen>
     }
   }
 
+  /// Navigate to Home screen after successful registration
+  /// Using pushReplacement to prevent going back to register/login
   void _navigateToHome() {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const MainAppScreen(),
+            const HomeScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          // Fade + Scale transition for smooth entry
           return FadeTransition(
             opacity: animation,
             child: ScaleTransition(
-              scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                ),
+              ),
               child: child,
             ),
           );
