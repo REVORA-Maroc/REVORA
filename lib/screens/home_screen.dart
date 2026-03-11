@@ -151,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen>
               const SizedBox(width: 12),
 
               Text(
-                '',
+                'REVORA',
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
@@ -400,8 +400,8 @@ class _HomeScreenState extends State<HomeScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Image.network(
-                      'https://lh3.googleusercontent.com/aida-public/AB6AXuC6K9XCUMyZ4iB5IqYIG4ilhewRMwOiYiy1T5H_HC-aFcWbZZYlzOPRHzaUY_6Pn9052g7EvaQQcRO3mjr-1wgkNH88vQsU4gtkGPVB_9sZlZbTZCBAsnzQEtXnobP6CvUWNP-Yh1NAZ1qcDPzQmOVaNDm9tl7bQ8DROKkT5IQ62ytdOlDb8S4hBBEfTIc-SGcQG9Z-WJWlWYPLTp9Jk7za2jLOCS5zDtlPEE2spJR55QqcyoIFnFTCB6oo8aHKts9Wwo3Cua6g4gQ',
+                    child: Image.asset(
+                      'assets/images/car.png',
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(

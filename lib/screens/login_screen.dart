@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -116,10 +117,7 @@ class _LoginScreenState extends State<LoginScreen>
             opacity: animation,
             child: ScaleTransition(
               scale: Tween<double>(begin: 0.95, end: 1.0).animate(
-                CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutCubic,
-                ),
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
               ),
               child: child,
             ),
@@ -138,14 +136,11 @@ class _LoginScreenState extends State<LoginScreen>
             const Icon(Icons.error_outline, color: Colors.white, size: 20),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                message,
-                style: GoogleFonts.inter(fontSize: 14),
-              ),
+              child: Text(message, style: GoogleFonts.inter(fontSize: 14)),
             ),
           ],
         ),
-        backgroundColor: Colors.redAccent.withOpacity(0.9),
+        backgroundColor: Colors.redAccent.withValues(alpha: 0.9),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
@@ -206,72 +201,94 @@ class _LoginScreenState extends State<LoginScreen>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(height: isSmallScreen ? 16 : 24),
-                            
+
                             // Logo with proper spacing
                             Center(
-                              child: Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppTheme.neonCyan.withOpacity(0.3),
-                                      blurRadius: 30,
-                                      spreadRadius: 5,
-                                    ),
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.asset(
-                                    'assets/images/revora_logo.png',
-                                    width: 80,
-                                    height: 80,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
+                              child:
+                                  Container(
+                                        width: 80,
+                                        height: 80,
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          gradient: const LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              AppTheme.neonCyan,
-                                              AppTheme.neonBlue
-                                            ],
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: AppTheme.neonCyan
+                                                  .withValues(alpha: 0.3),
+                                              blurRadius: 30,
+                                              spreadRadius: 5,
+                                            ),
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          child: Image.asset(
+                                            'assets/images/revora_logo.png',
+                                            width: 80,
+                                            height: 80,
+                                            fit: BoxFit.contain,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            20,
+                                                          ),
+                                                      gradient:
+                                                          const LinearGradient(
+                                                            begin: Alignment
+                                                                .topLeft,
+                                                            end: Alignment
+                                                                .bottomRight,
+                                                            colors: [
+                                                              AppTheme.neonCyan,
+                                                              AppTheme.neonBlue,
+                                                            ],
+                                                          ),
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.electric_car,
+                                                      size: 40,
+                                                      color: Colors.black,
+                                                    ),
+                                                  );
+                                                },
                                           ),
                                         ),
-                                        child: const Icon(
-                                          Icons.electric_car,
-                                          size: 40,
-                                          color: Colors.black,
+                                      )
+                                      .animate()
+                                      .fadeIn(
+                                        duration: const Duration(
+                                          milliseconds: 400,
                                         ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                                  .animate()
-                                  .fadeIn(duration: const Duration(milliseconds: 400))
-                                  .scale(delay: const Duration(milliseconds: 100)),
+                                      )
+                                      .scale(
+                                        delay: const Duration(
+                                          milliseconds: 100,
+                                        ),
+                                      ),
                             ),
 
                             const SizedBox(height: 20),
 
                             // Welcome Text
                             Text(
-                              'Welcome Back',
-                              style: GoogleFonts.inter(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w800,
-                                color: AppTheme.textPrimary,
-                                letterSpacing: -0.5,
-                              ),
-                            )
+                                  'Welcome Back',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppTheme.textPrimary,
+                                    letterSpacing: -0.5,
+                                  ),
+                                )
                                 .animate()
-                                .fadeIn(delay: const Duration(milliseconds: 200))
+                                .fadeIn(
+                                  delay: const Duration(milliseconds: 200),
+                                )
                                 .slideY(begin: 0.2, end: 0),
 
                             const SizedBox(height: 4),
@@ -282,62 +299,69 @@ class _LoginScreenState extends State<LoginScreen>
                                 fontSize: 14,
                                 color: AppTheme.textSecondary,
                               ),
-                            )
-                                .animate()
-                                .fadeIn(delay: const Duration(milliseconds: 300)),
+                            ).animate().fadeIn(
+                              delay: const Duration(milliseconds: 300),
+                            ),
 
                             SizedBox(height: isSmallScreen ? 20 : 28),
 
                             // Email Field
                             _buildTextField(
-                              controller: _emailController,
-                              label: 'Email',
-                              hint: 'name@example.com',
-                              prefixIcon: Icons.email_outlined,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (value?.isEmpty ?? true) {
-                                  return 'Please enter your email';
-                                }
-                                if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                                    .hasMatch(value!)) {
-                                  return 'Please enter a valid email';
-                                }
-                                return null;
-                              },
-                            )
+                                  controller: _emailController,
+                                  label: 'Email',
+                                  hint: 'name@example.com',
+                                  prefixIcon: Icons.email_outlined,
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: (value) {
+                                    if (value?.isEmpty ?? true) {
+                                      return 'Please enter your email';
+                                    }
+                                    if (!RegExp(
+                                      r'^[^@]+@[^@]+\.[^@]+',
+                                    ).hasMatch(value!)) {
+                                      return 'Please enter a valid email';
+                                    }
+                                    return null;
+                                  },
+                                )
                                 .animate()
-                                .fadeIn(delay: const Duration(milliseconds: 400))
+                                .fadeIn(
+                                  delay: const Duration(milliseconds: 400),
+                                )
                                 .slideX(begin: -0.1, end: 0),
 
                             const SizedBox(height: 14),
 
                             // Password Field
                             _buildTextField(
-                              controller: _passwordController,
-                              label: 'Password',
-                              hint: '••••••••',
-                              prefixIcon: Icons.lock_outline,
-                              obscureText: _obscurePassword,
-                              suffixIcon: _obscurePassword
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              onSuffixTap: () {
-                                setState(() =>
-                                    _obscurePassword = !_obscurePassword);
-                              },
-                              validator: (value) {
-                                if (value?.isEmpty ?? true) {
-                                  return 'Please enter your password';
-                                }
-                                if (value!.length < 6) {
-                                  return 'Password must be at least 6 characters';
-                                }
-                                return null;
-                              },
-                            )
+                                  controller: _passwordController,
+                                  label: 'Password',
+                                  hint: '••••••••',
+                                  prefixIcon: Icons.lock_outline,
+                                  obscureText: _obscurePassword,
+                                  suffixIcon: _obscurePassword
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                  onSuffixTap: () {
+                                    setState(
+                                      () =>
+                                          _obscurePassword = !_obscurePassword,
+                                    );
+                                  },
+                                  validator: (value) {
+                                    if (value?.isEmpty ?? true) {
+                                      return 'Please enter your password';
+                                    }
+                                    if (value!.length < 6) {
+                                      return 'Password must be at least 6 characters';
+                                    }
+                                    return null;
+                                  },
+                                )
                                 .animate()
-                                .fadeIn(delay: const Duration(milliseconds: 500))
+                                .fadeIn(
+                                  delay: const Duration(milliseconds: 500),
+                                )
                                 .slideX(begin: -0.1, end: 0),
 
                             const SizedBox(height: 8),
@@ -367,38 +391,42 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                 ),
                               ),
-                            )
-                                .animate()
-                                .fadeIn(delay: const Duration(milliseconds: 600)),
+                            ).animate().fadeIn(
+                              delay: const Duration(milliseconds: 600),
+                            ),
 
                             SizedBox(height: isSmallScreen ? 16 : 20),
 
                             // Sign In Button
                             _buildSignInButton()
                                 .animate()
-                                .fadeIn(delay: const Duration(milliseconds: 700))
-                                .scale(delay: const Duration(milliseconds: 700)),
+                                .fadeIn(
+                                  delay: const Duration(milliseconds: 700),
+                                )
+                                .scale(
+                                  delay: const Duration(milliseconds: 700),
+                                ),
 
                             const SizedBox(height: 20),
 
                             // Divider
-                            _buildDivider()
-                                .animate()
-                                .fadeIn(delay: const Duration(milliseconds: 800)),
+                            _buildDivider().animate().fadeIn(
+                              delay: const Duration(milliseconds: 800),
+                            ),
 
                             const SizedBox(height: 16),
 
                             // Social Login Options
-                            _buildSocialButtons()
-                                .animate()
-                                .fadeIn(delay: const Duration(milliseconds: 900)),
+                            _buildSocialButtons().animate().fadeIn(
+                              delay: const Duration(milliseconds: 900),
+                            ),
 
                             const SizedBox(height: 20),
 
                             // Register Link
-                            _buildRegisterLink()
-                                .animate()
-                                .fadeIn(delay: const Duration(milliseconds: 1000)),
+                            _buildRegisterLink().animate().fadeIn(
+                              delay: const Duration(milliseconds: 1000),
+                            ),
 
                             SizedBox(height: isSmallScreen ? 16 : 24),
                           ],
@@ -442,16 +470,13 @@ class _LoginScreenState extends State<LoginScreen>
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            color: AppTheme.textPrimary,
-          ),
+          style: GoogleFonts.inter(fontSize: 15, color: AppTheme.textPrimary),
           validator: validator,
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: GoogleFonts.inter(
               fontSize: 15,
-              color: AppTheme.textSecondary.withOpacity(0.5),
+              color: AppTheme.textSecondary.withValues(alpha: 0.5),
             ),
             prefixIcon: Icon(
               prefixIcon,
@@ -483,17 +508,11 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: AppTheme.neonCyan,
-                width: 2,
-              ),
+              borderSide: const BorderSide(color: AppTheme.neonCyan, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Colors.redAccent,
-                width: 1,
-              ),
+              borderSide: const BorderSide(color: Colors.redAccent, width: 1),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -560,10 +579,7 @@ class _LoginScreenState extends State<LoginScreen>
             height: 1,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.transparent,
-                  AppTheme.glassBorder,
-                ],
+                colors: [Colors.transparent, AppTheme.glassBorder],
               ),
             ),
           ),
@@ -583,10 +599,7 @@ class _LoginScreenState extends State<LoginScreen>
             height: 1,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  AppTheme.glassBorder,
-                  Colors.transparent,
-                ],
+                colors: [AppTheme.glassBorder, Colors.transparent],
               ),
             ),
           ),
@@ -596,24 +609,25 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget _buildSocialButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-        // Google Button
+        // Google Button - Full width
         _buildSocialButton(
           onTap: _isGoogleLoading ? null : _signInWithGoogle,
           iconPath: 'assets/icons/Google.png',
           isLoading: _isGoogleLoading,
           label: 'Google',
         ),
-        const SizedBox(width: 16),
-        // Apple Button
-        _buildSocialButton(
-          onTap: _isAppleLoading ? null : _signInWithApple,
-          iconPath: 'assets/icons/Apple.png',
-          isLoading: _isAppleLoading,
-          label: 'Apple',
-        ),
+        // Apple Button - iOS only (Apple requires it when other OAuth is offered on iOS)
+        if (Platform.isIOS) ...[
+          const SizedBox(height: 12),
+          _buildSocialButton(
+            onTap: _isAppleLoading ? null : _signInWithApple,
+            iconPath: 'assets/icons/Apple.png',
+            isLoading: _isAppleLoading,
+            label: 'Apple',
+          ),
+        ],
       ],
     );
   }
@@ -627,18 +641,15 @@ class _LoginScreenState extends State<LoginScreen>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 70,
-        height: 56,
+        width: double.infinity,
+        height: 52,
         decoration: BoxDecoration(
           color: AppTheme.glassDark,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppTheme.glassBorder,
-            width: 1,
-          ),
+          border: Border.all(color: AppTheme.glassBorder, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -651,24 +662,37 @@ class _LoginScreenState extends State<LoginScreen>
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(AppTheme.neonCyan),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppTheme.neonCyan,
+                    ),
                   ),
                 ),
               )
-            : Center(
-                child: Image.asset(
-                  iconPath,
-                  width: 28,
-                  height: 28,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(
-                      label == 'Google' ? Icons.g_mobiledata : Icons.apple,
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    iconPath,
+                    width: 24,
+                    height: 24,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        label == 'Google' ? Icons.g_mobiledata : Icons.apple,
+                        color: AppTheme.textPrimary,
+                        size: 24,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Continue with $label',
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
                       color: AppTheme.textPrimary,
-                      size: 28,
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
       ),
     );
@@ -680,10 +704,7 @@ class _LoginScreenState extends State<LoginScreen>
       children: [
         Text(
           "Don't have an account? ",
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: AppTheme.textSecondary,
-          ),
+          style: GoogleFonts.inter(fontSize: 14, color: AppTheme.textSecondary),
         ),
         GestureDetector(
           onTap: _navigateToRegister,

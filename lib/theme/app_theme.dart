@@ -70,7 +70,7 @@ class AppTheme {
   
   static List<BoxShadow> subtleGlow = [
     BoxShadow(
-      color: neonCyan.withOpacity(0.15),
+      color: neonCyan.withValues(alpha: 0.15),
       blurRadius: 30,
       spreadRadius: 5,
     ),
@@ -98,8 +98,8 @@ class AppTheme {
       suffixIcon: suffixIcon,
       filled: true,
       fillColor: isFocused 
-          ? charcoal.withOpacity(0.8)
-          : midnightBlue.withOpacity(0.6),
+          ? charcoal.withValues(alpha: 0.8)
+          : midnightBlue.withValues(alpha: 0.6),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide(
@@ -151,8 +151,6 @@ class AppTheme {
         onSecondary: Colors.white,
         surface: charcoal,
         onSurface: textPrimary,
-        background: darkNavy,
-        onBackground: textPrimary,
         error: Colors.redAccent,
         onError: Colors.white,
         outline: glassBorder,
@@ -272,7 +270,7 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: midnightBlue.withOpacity(0.6),
+        fillColor: midnightBlue.withValues(alpha: 0.6),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: glassBorder),

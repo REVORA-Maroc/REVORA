@@ -3,39 +3,39 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_theme.dart';
 
 /// Reusable App Logo Widget
-/// 
+///
 /// This widget displays the Revora logo from assets/images/revora_logo.png
 /// and is used consistently across all screens (Splash, Onboarding, Login, Register, AppBar).
-/// 
+///
 /// Features:
 /// - Responsive sizing based on screen dimensions
 /// - Optional animations (glow, scale, shimmer)
 /// - Maintains aspect ratio for proper logo display
-/// 
+///
 /// Usage:
 /// ```dart
 /// // Simple logo
 /// AppLogo(size: 100)
-/// 
+///
 /// // Logo with animation
 /// AppLogo(size: 120, animate: true)
-/// 
+///
 /// // Logo with custom glow intensity
 /// AppLogo(size: 150, animate: true, glowIntensity: 0.6)
 /// ```
 class AppLogo extends StatelessWidget {
   /// Logo size in logical pixels (width and height)
   final double size;
-  
+
   /// Whether to apply entrance animations
   final bool animate;
-  
+
   /// Glow intensity (0.0 to 1.0)
   final double glowIntensity;
-  
+
   /// Border radius for the logo container
   final double borderRadius;
-  
+
   /// Optional box fit for the image
   final BoxFit fit;
 
@@ -53,11 +53,7 @@ class AppLogo extends StatelessWidget {
   factory AppLogo.large(BuildContext context, {bool animate = true}) {
     final screenWidth = MediaQuery.of(context).size.width;
     final size = (screenWidth * 0.25).clamp(120.0, 180.0);
-    return AppLogo(
-      size: size,
-      animate: animate,
-      glowIntensity: 0.6,
-    );
+    return AppLogo(size: size, animate: animate, glowIntensity: 0.6);
   }
 
   /// Creates a medium logo variant for auth screens (Login/Register)
@@ -65,11 +61,7 @@ class AppLogo extends StatelessWidget {
   factory AppLogo.medium(BuildContext context, {bool animate = true}) {
     final screenWidth = MediaQuery.of(context).size.width;
     final size = (screenWidth * 0.22).clamp(80.0, 100.0);
-    return AppLogo(
-      size: size,
-      animate: animate,
-      glowIntensity: 0.5,
-    );
+    return AppLogo(size: size, animate: animate, glowIntensity: 0.5);
   }
 
   /// Creates a small logo variant for headers and AppBars
@@ -95,19 +87,19 @@ class AppLogo extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppTheme.neonCyan.withOpacity(0.1 * glowIntensity),
-            AppTheme.neonBlue.withOpacity(0.1 * glowIntensity),
+            AppTheme.neonCyan.withValues(alpha: 0.1 * glowIntensity),
+            AppTheme.neonBlue.withValues(alpha: 0.1 * glowIntensity),
           ],
         ),
         // Neon glow effect
         boxShadow: [
           BoxShadow(
-            color: AppTheme.neonCyan.withOpacity(0.3 * glowIntensity),
+            color: AppTheme.neonCyan.withValues(alpha: 0.3 * glowIntensity),
             blurRadius: size * 0.3,
             spreadRadius: size * 0.05,
           ),
           BoxShadow(
-            color: AppTheme.neonBlue.withOpacity(0.2 * glowIntensity),
+            color: AppTheme.neonBlue.withValues(alpha: 0.2 * glowIntensity),
             blurRadius: size * 0.5,
             spreadRadius: size * 0.1,
           ),
@@ -152,7 +144,7 @@ class AppLogo extends StatelessWidget {
           // Shimmer effect
           .shimmer(
             duration: const Duration(seconds: 2),
-            color: AppTheme.neonCyan.withOpacity(0.2),
+            color: AppTheme.neonCyan.withValues(alpha: 0.2),
           );
     }
 
@@ -161,16 +153,13 @@ class AppLogo extends StatelessWidget {
 }
 
 /// Animated App Logo for Splash Screen
-/// 
+///
 /// A specialized version with continuous pulse animation
 /// designed specifically for the splash screen experience.
 class AnimatedSplashLogo extends StatefulWidget {
   final double size;
-  
-  const AnimatedSplashLogo({
-    super.key,
-    this.size = 150,
-  });
+
+  const AnimatedSplashLogo({super.key, this.size = 150});
 
   @override
   State<AnimatedSplashLogo> createState() => _AnimatedSplashLogoState();
@@ -185,7 +174,7 @@ class _AnimatedSplashLogoState extends State<AnimatedSplashLogo>
   @override
   void initState() {
     super.initState();
-    
+
     // Pulse animation controller
     _pulseController = AnimationController(
       vsync: this,
@@ -194,30 +183,32 @@ class _AnimatedSplashLogoState extends State<AnimatedSplashLogo>
 
     // Pulse glow intensity
     _pulseAnimation = Tween<double>(begin: 0.4, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _pulseController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
     // Scale bounce animation
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.2)
-            .chain(CurveTween(curve: Curves.easeOutBack)),
-        weight: 60,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.2, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeInOut)),
-        weight: 40,
-      ),
-    ]).animate(
-      CurvedAnimation(
-        parent: _pulseController,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
-      ),
-    );
+    _scaleAnimation =
+        TweenSequence<double>([
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 0.0,
+              end: 1.2,
+            ).chain(CurveTween(curve: Curves.easeOutBack)),
+            weight: 60,
+          ),
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 1.2,
+              end: 1.0,
+            ).chain(CurveTween(curve: Curves.easeInOut)),
+            weight: 40,
+          ),
+        ]).animate(
+          CurvedAnimation(
+            parent: _pulseController,
+            curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+          ),
+        );
   }
 
   @override
@@ -241,12 +232,16 @@ class _AnimatedSplashLogoState extends State<AnimatedSplashLogo>
               // Pulsing glow effect
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.neonCyan.withOpacity(0.5 * _pulseAnimation.value),
+                  color: AppTheme.neonCyan.withValues(
+                    alpha: 0.5 * _pulseAnimation.value,
+                  ),
                   blurRadius: widget.size * 0.4 * _pulseAnimation.value,
                   spreadRadius: widget.size * 0.1 * _pulseAnimation.value,
                 ),
                 BoxShadow(
-                  color: AppTheme.neonBlue.withOpacity(0.3 * _pulseAnimation.value),
+                  color: AppTheme.neonBlue.withValues(
+                    alpha: 0.3 * _pulseAnimation.value,
+                  ),
                   blurRadius: widget.size * 0.6 * _pulseAnimation.value,
                   spreadRadius: widget.size * 0.15 * _pulseAnimation.value,
                 ),
