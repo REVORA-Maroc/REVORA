@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "86860149757",
+    "project_id": "revora-fda8d",
+    "storage_bucket": "revora-fda8d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86860149757:android:656dfaeef4b89719385f94",
+        "android_client_info": {
+          "package_name": "com.example.revora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "86860149757-t4n1kbg0jp46el96mcclefhpfj12d6bo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.revora",
+            "certificate_hash": "15c6bdf49633062392c93250808a307abdb8dddb"
+          }
+        },
+        {
+          "client_id": "86860149757-50na4r92gg73t9rnj79kc4d7q3unrb1p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiQ9X1KTSu5FrcLO2qkuYuzaPLWYD-_A8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "86860149757-50na4r92gg73t9rnj79kc4d7q3unrb1p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
