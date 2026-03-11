@@ -199,7 +199,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             boxShadow: _currentPage == _pages.length - 1
                                 ? [
                                     BoxShadow(
-                                      color: AppTheme.neonCyan.withOpacity(0.3),
+                                      color: AppTheme.neonCyan.withValues(alpha: 0.3),
                                       blurRadius: 20,
                                       offset: const Offset(0, 4),
                                     ),

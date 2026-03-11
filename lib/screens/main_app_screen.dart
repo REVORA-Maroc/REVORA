@@ -70,7 +70,7 @@ class MainAppScreen extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.neonCyan.withOpacity(0.3),
+                        color: AppTheme.neonCyan.withValues(alpha: 0.3),
                         blurRadius: 30,
                         spreadRadius: 10,
                       ),

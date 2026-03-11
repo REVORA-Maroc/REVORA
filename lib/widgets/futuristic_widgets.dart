@@ -62,7 +62,7 @@ class _NeonButtonState extends State<NeonButton>
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         curve: Curves.easeInOut,
-        transform: Matrix4.identity()..scale(_isPressed ? 0.97 : 1.0),
+        transform: Matrix4.diagonal3Values(_isPressed ? 0.97 : 1.0, _isPressed ? 0.97 : 1.0, 1.0),
         child: Container(
           width: double.infinity,
           height: widget.height,
@@ -73,13 +73,13 @@ class _NeonButtonState extends State<NeonButton>
                 ? []
                 : [
                     BoxShadow(
-                      color: AppTheme.neonCyan.withOpacity(0.4),
+                      color: AppTheme.neonCyan.withValues(alpha: 0.4),
                       blurRadius: 20,
                       spreadRadius: 2,
                       offset: const Offset(0, 4),
                     ),
                     BoxShadow(
-                      color: AppTheme.neonBlue.withOpacity(0.2),
+                      color: AppTheme.neonBlue.withValues(alpha: 0.2),
                       blurRadius: 40,
                       spreadRadius: 8,
                       offset: const Offset(0, 8),
@@ -99,12 +99,15 @@ class _NeonButtonState extends State<NeonButton>
                       return Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(
-                            0.3 * (1 - _rippleController.value),
+                          color: Colors.white.withValues(
+                            alpha: 0.3 * (1 - _rippleController.value),
                           ),
                         ),
-                        transform: Matrix4.identity()
-                          ..scale(1 + _rippleController.value * 2),
+                        transform: Matrix4.diagonal3Values(
+                          1 + _rippleController.value * 2,
+                          1 + _rippleController.value * 2,
+                          1,
+                        ),
                       );
                     },
                   ),
@@ -156,7 +159,7 @@ class _NeonButtonState extends State<NeonButton>
             .animate()
             .shimmer(
               duration: const Duration(seconds: 2),
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
             ),
       ),
     );
@@ -268,8 +271,8 @@ class _FuturisticTextFieldState extends State<FuturisticTextField> {
                   : null,
               filled: true,
               fillColor: _isFocused
-                  ? AppTheme.charcoal.withOpacity(0.8)
-                  : AppTheme.midnightBlue.withOpacity(0.6),
+                  ? AppTheme.charcoal.withValues(alpha: 0.8)
+                  : AppTheme.midnightBlue.withValues(alpha: 0.6),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(
@@ -447,17 +450,17 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
             borderRadius: BorderRadius.circular(16),
             color: _isHovered
                 ? AppTheme.charcoal
-                : AppTheme.midnightBlue.withOpacity(0.8),
+                : AppTheme.midnightBlue.withValues(alpha: 0.8),
             border: Border.all(
               color: _isHovered
-                  ? AppTheme.neonCyan.withOpacity(0.5)
+                  ? AppTheme.neonCyan.withValues(alpha: 0.5)
                   : AppTheme.glassBorder,
               width: _isHovered ? 2 : 1,
             ),
             boxShadow: _isHovered
                 ? [
                     BoxShadow(
-                      color: AppTheme.neonCyan.withOpacity(0.1),
+                      color: AppTheme.neonCyan.withValues(alpha: 0.1),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
@@ -582,7 +585,7 @@ class FuturisticLogo extends StatelessWidget {
         gradient: AppTheme.neonGradient,
         boxShadow: [
           BoxShadow(
-            color: AppTheme.neonCyan.withOpacity(0.4),
+            color: AppTheme.neonCyan.withValues(alpha: 0.4),
             blurRadius: 30,
             spreadRadius: 5,
             offset: const Offset(0, 8),

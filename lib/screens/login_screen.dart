@@ -145,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen>
             ),
           ],
         ),
-        backgroundColor: Colors.redAccent.withOpacity(0.9),
+        backgroundColor: Colors.redAccent.withValues(alpha: 0.9),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
@@ -216,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppTheme.neonCyan.withOpacity(0.3),
+                                      color: AppTheme.neonCyan.withValues(alpha: 0.3),
                                       blurRadius: 30,
                                       spreadRadius: 5,
                                     ),
@@ -451,7 +451,7 @@ class _LoginScreenState extends State<LoginScreen>
             hintText: hint,
             hintStyle: GoogleFonts.inter(
               fontSize: 15,
-              color: AppTheme.textSecondary.withOpacity(0.5),
+              color: AppTheme.textSecondary.withValues(alpha: 0.5),
             ),
             prefixIcon: Icon(
               prefixIcon,
@@ -638,7 +638,7 @@ class _LoginScreenState extends State<LoginScreen>
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),

@@ -50,6 +50,14 @@ dependencies:
   shared_preferences: ^2.2.2
   permission_handler: ^12.0.1
 
+  # Bluetooth & WiFi
+  flutter_blue_plus: ^1.35.2
+  wifi_scan: ^0.4.1
+
+  # Local Database
+  sqflite: ^2.3.2
+  path_provider: ^2.1.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -95,19 +95,19 @@ class AppLogo extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppTheme.neonCyan.withOpacity(0.1 * glowIntensity),
-            AppTheme.neonBlue.withOpacity(0.1 * glowIntensity),
+            AppTheme.neonCyan.withValues(alpha: 0.1 * glowIntensity),
+            AppTheme.neonBlue.withValues(alpha: 0.1 * glowIntensity),
           ],
         ),
         // Neon glow effect
         boxShadow: [
           BoxShadow(
-            color: AppTheme.neonCyan.withOpacity(0.3 * glowIntensity),
+            color: AppTheme.neonCyan.withValues(alpha: 0.3 * glowIntensity),
             blurRadius: size * 0.3,
             spreadRadius: size * 0.05,
           ),
           BoxShadow(
-            color: AppTheme.neonBlue.withOpacity(0.2 * glowIntensity),
+            color: AppTheme.neonBlue.withValues(alpha: 0.2 * glowIntensity),
             blurRadius: size * 0.5,
             spreadRadius: size * 0.1,
           ),
@@ -152,7 +152,7 @@ class AppLogo extends StatelessWidget {
           // Shimmer effect
           .shimmer(
             duration: const Duration(seconds: 2),
-            color: AppTheme.neonCyan.withOpacity(0.2),
+            color: AppTheme.neonCyan.withValues(alpha: 0.2),
           );
     }
 
@@ -241,12 +241,12 @@ class _AnimatedSplashLogoState extends State<AnimatedSplashLogo>
               // Pulsing glow effect
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.neonCyan.withOpacity(0.5 * _pulseAnimation.value),
+                  color: AppTheme.neonCyan.withValues(alpha: 0.5 * _pulseAnimation.value),
                   blurRadius: widget.size * 0.4 * _pulseAnimation.value,
                   spreadRadius: widget.size * 0.1 * _pulseAnimation.value,
                 ),
                 BoxShadow(
-                  color: AppTheme.neonBlue.withOpacity(0.3 * _pulseAnimation.value),
+                  color: AppTheme.neonBlue.withValues(alpha: 0.3 * _pulseAnimation.value),
                   blurRadius: widget.size * 0.6 * _pulseAnimation.value,
                   spreadRadius: widget.size * 0.15 * _pulseAnimation.value,
                 ),

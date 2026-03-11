@@ -78,6 +78,9 @@ class _RegisterScreenState extends State<RegisterScreen>
   Future<void> _signUpWithGoogle() async {
     setState(() => _isGoogleLoading = true);
 
+
+
+
     try {
       final credential = await _authService.signInWithGoogle();
 
@@ -159,7 +162,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
           ],
         ),
-        backgroundColor: Colors.redAccent.withOpacity(0.9),
+        backgroundColor: Colors.redAccent.withValues(alpha: 0.9),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
@@ -183,7 +186,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
           ],
         ),
-        backgroundColor: Colors.green.withOpacity(0.9),
+        backgroundColor: Colors.green.withValues(alpha: 0.9),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
@@ -235,7 +238,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   borderRadius: BorderRadius.circular(18),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppTheme.neonCyan.withOpacity(0.3),
+                                      color: AppTheme.neonCyan.withValues(alpha: 0.3),
                                       blurRadius: 25,
                                       spreadRadius: 4,
                                     ),
@@ -498,7 +501,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             hintText: hint,
             hintStyle: GoogleFonts.inter(
               fontSize: 14,
-              color: AppTheme.textSecondary.withOpacity(0.5),
+              color: AppTheme.textSecondary.withValues(alpha: 0.5),
             ),
             prefixIcon: Icon(
               prefixIcon,
@@ -574,7 +577,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               boxShadow: _agreedToTerms
                   ? [
                       BoxShadow(
-                        color: AppTheme.neonCyan.withOpacity(0.3),
+                        color: AppTheme.neonCyan.withValues(alpha: 0.3),
                         blurRadius: 6,
                         spreadRadius: 1,
                       ),
@@ -757,7 +760,7 @@ class _RegisterScreenState extends State<RegisterScreen>
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),

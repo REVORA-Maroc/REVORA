@@ -169,8 +169,8 @@ class _SplashScreenState extends State<SplashScreen>
                                 borderRadius: BorderRadius.circular(48),
                                 boxShadow: [
                                 BoxShadow(
-                                  color: AppTheme.neonCyan.withOpacity(
-                                    0.3 * _glowAnimation.value,
+                                  color: AppTheme.neonCyan.withValues(
+                                    alpha: 0.3 * _glowAnimation.value,
                                   ),
                                   blurRadius: 50 * _glowAnimation.value,
                                   spreadRadius: 15 * _glowAnimation.value,
@@ -226,7 +226,7 @@ class _SplashScreenState extends State<SplashScreen>
                               letterSpacing: 12,
                               shadows: [
                                 Shadow(
-                                  color: AppTheme.neonCyan.withOpacity(0.5),
+                                  color: AppTheme.neonCyan.withValues(alpha: 0.5),
                                   blurRadius: 20,
                                   offset: const Offset(0, 0),
                                 ),
@@ -236,7 +236,7 @@ class _SplashScreenState extends State<SplashScreen>
                               .animate(onPlay: (controller) => controller.repeat())
                               .shimmer(
                                 duration: const Duration(seconds: 2),
-                                color: AppTheme.neonCyan.withOpacity(0.3),
+                                color: AppTheme.neonCyan.withValues(alpha: 0.3),
                               ),
                         );
                       },
@@ -306,13 +306,13 @@ class ParticleBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppTheme.neonCyan.withOpacity(0.05)
+      ..color = AppTheme.neonCyan.withValues(alpha: 0.05)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
     // Draw floating particles
     final particlePaint = Paint()
-      ..color = AppTheme.neonCyan.withOpacity(0.1)
+      ..color = AppTheme.neonCyan.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill;
 
     // Random particle positions (static for consistency)
@@ -341,7 +341,7 @@ class ParticleBackgroundPainter extends CustomPainter {
           canvas.drawLine(
             particles[i],
             particles[j],
-            paint..color = AppTheme.neonCyan.withOpacity(0.03),
+            paint..color = AppTheme.neonCyan.withValues(alpha: 0.03),
           );
         }
       }
