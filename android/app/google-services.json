@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "86860149757-pjm9hg0ocd3tujs1f4je1oc1j6kv6us7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.revora",
+            "certificate_hash": "d20e50c07df178d696b325b5924507ea2f807dff"
+          }
+        },
+        {
           "client_id": "86860149757-t4n1kbg0jp46el96mcclefhpfj12d6bo.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
