@@ -57,12 +57,12 @@ class AppTheme {
   // Glow effects
   static List<BoxShadow> neonGlow = [
     BoxShadow(
-      color: neonCyan.withAlpha(128), // 0.5 opacity
+      color: neonCyan.withValues(alpha: 0.5),
       blurRadius: 20,
       spreadRadius: 2,
     ),
     BoxShadow(
-      color: neonBlue.withAlpha(77), // 0.3 opacity
+      color: neonBlue.withValues(alpha: 0.3),
       blurRadius: 40,
       spreadRadius: 10,
     ),
