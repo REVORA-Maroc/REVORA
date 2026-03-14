@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../theme/app_theme.dart';
 import '../widgets/device_scanner_dialog.dart';
+import 'add_vehicle_intro_screen.dart';
 
 /// Modern Home Screen for Revora
 /// Features professional UI with smooth animations
@@ -426,7 +427,12 @@ class _HomeScreenState extends State<HomeScreen>
                   // Manage Vehicle Button
                   GestureDetector(
                     onTap: () {
-                      // Navigate to vehicle management
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddVehicleIntroScreen(),
+                        ),
+                      );
                     },
                     child: Container(
                       width: double.infinity,
