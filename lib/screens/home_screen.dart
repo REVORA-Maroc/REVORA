@@ -937,7 +937,7 @@ class _HomeScreenState extends State<HomeScreen>
               Icons.chevron_right,
               color: AppTheme.textMuted,
               size: 24,
-            ),
+            ),//commt
           ],
         ),
       ),
