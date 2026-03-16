@@ -3,8 +3,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../theme/app_theme.dart';
-import '../widgets/device_scanner_dialog.dart';
 import 'add_vehicle_intro_screen.dart';
+import 'bluetooth_connection_screen.dart';
+import 'wifi_connection_screen.dart';
 
 /// Modern Home Screen for Revora
 /// Features professional UI with smooth animations
@@ -642,12 +643,10 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  /// Request Bluetooth permissions and show scanner
+  /// Request Bluetooth permissions and open the Bluetooth connection screen
   Future<void> _requestBluetoothPermission() async {
-    // Store context before async operation
     if (!mounted) return;
 
-    // Request Bluetooth permissions
     Map<Permission, PermissionStatus> statuses = await [
       Permission.bluetooth,
       Permission.bluetoothScan,
@@ -660,20 +659,10 @@ class _HomeScreenState extends State<HomeScreen>
     if (!mounted) return;
 
     if (allGranted) {
-      // Show device scanner dialog
-      showDialog(
-        context: context,
-        builder: (dialogContext) => DeviceScannerDialog(
-          scanType: ScanType.bluetooth,
-          onDeviceSelected: (device) {
-            Navigator.pop(dialogContext);
-            if (mounted) {
-              setState(() {
-                _isConnected = true;
-              });
-              _showSuccessSnackBar('Connected to ${device.name}');
-            }
-          },
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const BluetoothConnectionScreen(),
         ),
       );
     } else {
@@ -681,12 +670,10 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  /// Request Wi-Fi permissions and show scanner
+  /// Request Wi-Fi permissions and open the Wi-Fi connection screen
   Future<void> _requestWifiPermission() async {
-    // Store context before async operation
     if (!mounted) return;
 
-    // Request Wi-Fi and location permissions
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
       Permission.nearbyWifiDevices,
@@ -697,49 +684,15 @@ class _HomeScreenState extends State<HomeScreen>
     if (!mounted) return;
 
     if (allGranted) {
-      // Show device scanner dialog
-      showDialog(
-        context: context,
-        builder: (dialogContext) => DeviceScannerDialog(
-          scanType: ScanType.wifi,
-          onDeviceSelected: (device) {
-            Navigator.pop(dialogContext);
-            if (mounted) {
-              setState(() {
-                _isConnected = true;
-              });
-              _showSuccessSnackBar('Connected to ${device.name}');
-            }
-          },
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const WifiConnectionScreen(),
         ),
       );
     } else {
       _showErrorSnackBar('Location permission is required to scan for Wi-Fi devices');
     }
-  }
-
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                message,
-                style: GoogleFonts.spaceGrotesk(fontSize: 14),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.green.withValues(alpha: 0.9),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 
   void _showErrorSnackBar(String message) {
