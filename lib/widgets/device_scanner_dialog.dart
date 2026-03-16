@@ -7,6 +7,9 @@ import '../theme/app_theme.dart';
 /// Enum to specify the type of scan
 enum ScanType { bluetooth, wifi }
 
+/// Enum to specify the Bluetooth protocol used by a device
+enum BluetoothProtocol { ble, classic, unknown }
+
 /// Model representing a scanned device
 class ScannedDevice {
   final String id;
@@ -14,6 +17,7 @@ class ScannedDevice {
   final String? address;
   final int? signalStrength;
   final ScanType type;
+  final BluetoothProtocol protocol;
 
   ScannedDevice({
     required this.id,
@@ -21,6 +25,7 @@ class ScannedDevice {
     this.address,
     this.signalStrength,
     required this.type,
+    this.protocol = BluetoothProtocol.unknown,
   });
 }
 
