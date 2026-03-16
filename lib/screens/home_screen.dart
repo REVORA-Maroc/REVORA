@@ -19,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
-  bool _isConnected = false;
+ final bool _isConnected = false;
 
   @override
   Widget build(BuildContext context) {
