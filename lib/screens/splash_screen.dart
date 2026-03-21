@@ -103,8 +103,11 @@ class _SplashScreenState extends State<SplashScreen>
     _isNavigating = true;
 
     final hasSeenOnboarding = _preferences.hasSeenOnboarding;
+    final isLoggedIn = _preferences.isLoggedIn;
 
-    if (hasSeenOnboarding) {
+    if (isLoggedIn) {
+      NavigationHelper.navigateToHome(context);
+    } else if (hasSeenOnboarding) {
       NavigationHelper.navigateToLogin(context);
     } else {
       NavigationHelper.navigateToOnboarding(context);
