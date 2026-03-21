@@ -4,6 +4,7 @@ import 'theme/app_theme.dart';
 import 'screens/splash_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/home_screen.dart';
 
 /// Main entry point for Revora app
 /// Shows SplashScreen immediately while initializing in background
@@ -106,6 +107,28 @@ class NavigationHelper {
             scale: scaleAnimation,
             child: FadeTransition(
               opacity: fadeAnimation,
+              child: child,
+            ),
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
+  }
+  
+  /// Navigate to Home screen with fade animation
+  static void navigateToHome(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const HomeScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              ),
               child: child,
             ),
           );

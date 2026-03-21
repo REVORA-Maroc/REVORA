@@ -3,9 +3,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../theme/app_theme.dart';
+import '../services/preferences_service.dart';
+import '../services/firebase_auth_service.dart';
 import 'add_vehicle_intro_screen.dart';
 import 'bluetooth_connection_screen.dart';
 import 'wifi_connection_screen.dart';
+import 'login_screen.dart';
 
 /// Modern Home Screen for Revora
 /// Features professional UI with smooth animations
@@ -19,7 +22,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
- final bool _isConnected = false;
+  final bool _isConnected = false;
+  final _preferences = PreferencesService();
+  final _authService = FirebaseAuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -216,9 +221,7 @@ class _HomeScreenState extends State<HomeScreen>
 
               // Settings Button
               GestureDetector(
-                onTap: () {
-                  // Navigate to settings
-                },
+                onTap: _showLogoutDialog,
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -226,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen>
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    Icons.settings_outlined,
+                    Icons.logout,
                     color: Colors.white,
                     size: 24,
                   ),
@@ -717,6 +720,78 @@ class _HomeScreenState extends State<HomeScreen>
         duration: const Duration(seconds: 3),
       ),
     );
+  }
+
+  /// Show logout confirmation dialog
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.charcoal,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Logout',
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to logout?',
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 14,
+            color: AppTheme.textSecondary,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textSecondary,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: _logout,
+            child: Text(
+              'Logout',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Colors.redAccent,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Handle logout
+  Future<void> _logout() async {
+    Navigator.pop(context);
+    await _preferences.setIsLoggedIn(false);
+    await _authService.signOut();
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const LoginScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 300),
+        ),
+      );
+    }
   }
 
   Widget _buildFeatureGrid() {

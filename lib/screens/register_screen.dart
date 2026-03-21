@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../services/firebase_auth_service.dart';
+import '../services/preferences_service.dart';
 import 'home_screen.dart';
 
 /// Professional Register Screen with compact layout
@@ -24,6 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _authService = FirebaseAuthService();
+  final _preferences = PreferencesService();
 
   bool _isLoading = false;
   bool _isGoogleLoading = false;
@@ -59,6 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       );
 
       if (credential != null && mounted) {
+        await _preferences.setIsLoggedIn(true);
         _showSuccessSnackBar('Account created successfully!');
         await Future.delayed(const Duration(seconds: 1));
         if (mounted) {
@@ -83,6 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       final credential = await _authService.signInWithGoogle();
 
       if (credential != null && mounted) {
+        await _preferences.setIsLoggedIn(true);
         _showSuccessSnackBar('Welcome to Revora!');
         _navigateToHome();
       }
@@ -104,6 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       final credential = await _authService.signInWithApple();
 
       if (credential != null && mounted) {
+        await _preferences.setIsLoggedIn(true);
         _showSuccessSnackBar('Welcome to Revora!');
         _navigateToHome();
       }
